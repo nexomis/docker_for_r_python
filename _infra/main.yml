@@ -1,0 +1,34 @@
+- name: Update bastion and setup NAT
+  hosts: bastion
+  become: yes  # Required to run tasks as root
+  tasks:
+    - name: Update packages
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: yes
+
+- name: manage SSH authorized_keys for admin user
+  hosts: nodes
+  become: yes  # Required to run tasks as root
+  tasks:
+    - name: Append public key to authorized_keys for admin user
+      ansible.builtin.lineinfile:
+        path: /home/admin/.ssh/authorized_keys
+        line: "{{ pub_key }}"
+        state: present
+        create: yes
+        owner: admin
+        group: admin
+        mode: '0600'
+      when: pub_key is defined
+    - name: Append public key to authorized_keys for admin user on bastion
+      delegate_to: bastion
+      ansible.builtin.lineinfile:
+        path: /home/admin/.ssh/authorized_keys
+        line: "{{ pub_key }}"
+        state: present
+        create: yes
+        owner: admin
+        group: admin
+        mode: '0600'
+      when: pub_key is defined

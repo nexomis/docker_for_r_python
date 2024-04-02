@@ -1,2 +1,9 @@
 hello
 *.o
+_infra/.terraform
+_infra/*vars
+_infra/ansible.cfg
+_infra/inventory.ini
+_infra/*pem
+_infra/*tfstate*
+.terraform.lock*
